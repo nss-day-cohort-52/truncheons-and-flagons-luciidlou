@@ -1,6 +1,6 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from teams.request import get_teams
+from teams.request import add_team, delete_team, get_teams, add_player
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -12,7 +12,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             if key in filters:
                 filters[key]['resources'].append(value)
             else:
-                filters[key] = { 'resources': [value] }
+                filters[key] = {'resources': [value]}
 
         return filters
 
@@ -22,9 +22,9 @@ class HandleRequests(BaseHTTPRequestHandler):
         url_parts = path.split("/")
         url_parts.pop(0)
 
-        resource = url_parts[1]
+        resource = url_parts[0]
         if "?" in resource:
-            [resource, params] =  resource.split("?")
+            [resource, params] = resource.split("?")
             filters = self.parse_query_string_parameters(params)
 
         try:
@@ -64,15 +64,37 @@ class HandleRequests(BaseHTTPRequestHandler):
         self._set_headers(200)
 
         response = {}
-        (resource, id, filters) = self.parse_url(self.path)
+        resource, id, filters = self.parse_url(self.path)
         response = f"{get_teams(filters)}"
 
         self.wfile.write(response.encode())
 
+    def do_POST(self):
+        self._set_headers(201)
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
 
+        resource, id, filters = self.parse_url(self.path)
+
+        new_obj = None
+
+        if resource == "players":
+            new_obj = add_player(post_body)
+        elif resource == "teams":
+            new_obj = add_team(post_body)
+
+        self.wfile.write(new_obj.encode())
+        
+    def do_DELETE(self):
+        self._set_headers(204)
+        resource, id, filters = self.parse_url(self.path)
+        if resource == "teams":
+            delete_team(id)
+        self.wfile.write("".encode())
 def main():
     host = ''
-    port = 8089
+    port = 8088
     HTTPServer((host, port), HandleRequests).serve_forever()
 
 

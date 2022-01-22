@@ -51,3 +51,14 @@ INSERT INTO `TeamScore` VALUES (null, 2, 1, 1583873462376);
 INSERT INTO `TeamScore` VALUES (null, 2, 6, 1583873462376);
 INSERT INTO `TeamScore` VALUES (null, 2, 3, 1583873462376);
 
+
+SELECT
+    t.id,
+    t.name,
+    ts.id score_id,
+    ts.teamId,
+    ts.score,
+    ts.timeStamp
+FROM Teams t
+LEFT JOIN TeamScore ts ON ts.teamId = t.id
+
