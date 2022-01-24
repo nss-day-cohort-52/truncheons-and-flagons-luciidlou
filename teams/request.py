@@ -107,6 +107,7 @@ def add_player(new_player):
 
         return json.dumps(new_player)
 
+
 def add_team(new_team):
     with sqlite3.connect("./flagons.db") as conn:
         conn.row_factory = sqlite3.Row
@@ -122,7 +123,8 @@ def add_team(new_team):
         new_team['id'] = id
 
         return json.dumps(new_team)
-    
+
+
 def delete_team(id):
     with sqlite3.connect("./flagons.db") as conn:
         conn.row_factory = sqlite3.Row
@@ -139,4 +141,3 @@ def delete_team(id):
         DELETE FROM players
         WHERE teamId = ?
         """, (id, ))
-
