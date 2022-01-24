@@ -133,10 +133,10 @@ def delete_team(id):
         """, (id, ))
         db_cursor.execute("""
         DELETE FROM teamscores
-        WHERE teamId = id
+        WHERE teamId = ?
         """, (id, ))
         db_cursor.execute("""
         DELETE FROM players
-        WHERE teamId = id
+        WHERE teamId = ?
         """, (id, ))
 
