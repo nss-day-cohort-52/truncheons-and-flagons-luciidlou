@@ -85,18 +85,19 @@ class HandleRequests(BaseHTTPRequestHandler):
             new_obj = add_team(post_body)
 
         self.wfile.write(new_obj.encode())
-        
+
     def do_DELETE(self):
         self._set_headers(204)
         resource, id, filters = self.parse_url(self.path)
         if resource == "teams":
             delete_team(id)
         self.wfile.write("".encode())
+
+
 def main():
     host = ''
     port = int(os.environ['PORT'])
     HTTPServer((host, port), HandleRequests).serve_forever()
 
 
-if __name__ == "__main__":
-    main()
+main()
